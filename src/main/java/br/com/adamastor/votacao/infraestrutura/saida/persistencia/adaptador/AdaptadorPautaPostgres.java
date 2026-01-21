@@ -34,4 +34,9 @@ public class AdaptadorPautaPostgres implements PortaRepositorioPauta {
 
         return mapper.paraDominio(entidadeSalva);
     }
+
+    @Override
+    public boolean existePorId(UUID id) {
+        return false;
+    }
 }
