@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,7 +26,9 @@ public class AbrirSessaoCasoDeUsoImpl implements AbrirSessaoCasoDeUso {
 
     @Override
     public Sessao executar(DadosAberturaSessaoDTO dados) {
-        log.info("Iniciando abertura de sessão para pauta: {}", dados.pautaId());
+        var novoId = UUID.randomUUID();
+
+        log.info("Iniciando abertura de sessão. ID Gerado: {}, Pauta ID: {}", novoId, dados.pautaId());
 
         if (!portaRepositorioPauta.existePorId(dados.pautaId())) {
             throw new EntidadeNaoEncontradaException("Pauta não encontrada com ID: " + dados.pautaId());
@@ -43,6 +46,7 @@ public class AbrirSessaoCasoDeUsoImpl implements AbrirSessaoCasoDeUso {
         var termino = inicio.plus(Duration.ofMinutes(minutos));
 
         var sessao = Sessao.builder()
+                .id(novoId)
                 .pautaId(dados.pautaId())
                 .dataHoraInicio(inicio)
                 .dataHoraTermino(termino)

@@ -22,8 +22,11 @@ public class Pauta {
 
     @EqualsAndHashCode.Include
     private UUID id;
+
     private String titulo;
+
     private String descricao;
+
     private Instant dataHoraCriacao;
 
 }

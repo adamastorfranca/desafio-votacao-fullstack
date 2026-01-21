@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -38,5 +39,13 @@ public class AdaptadorSessaoPostgres implements PortaRepositorioSessao {
     @Override
     public boolean existeSessaoAbertaParaPauta(UUID pautaId) {
         return repositorioSessaoJpa.existsByPautaIdAndStatus(pautaId, SessaoStatus.ABERTA);
+    }
+
+    @Override
+    public Optional<Sessao> obterPorId(UUID sessaoId) {
+        log.debug("Adaptador: Buscando sessão com ID: {}", sessaoId);
+
+        return repositorioSessaoJpa.findById(sessaoId)
+                .map(mapper::paraDominio);
     }
 }
