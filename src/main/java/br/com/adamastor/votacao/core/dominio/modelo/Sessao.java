@@ -32,18 +32,30 @@ public class Sessao {
     private SessaoStatus status;
 
     @Builder.Default
-    private Integer totalVotos = 0;
+    private Long totalVotos = 0L;
 
     @Builder.Default
-    private Integer totalSim = 0;
+    private Long totalSim = 0L;
 
     @Builder.Default
-    private Integer totalNao = 0;
+    private Long totalNao = 0L;
 
-    private SessaoResultado opcaoGanhadora;
+    private SessaoResultado resultado;
 
     public boolean isAberta() {
         return SessaoStatus.ABERTA.equals(this.status) &&
                 Instant.now().isBefore(this.dataHoraTermino);
+    }
+
+    public void registrarResultado(
+            long totalVotos,
+            long totalSim,
+            long totalNao,
+            String resultado
+    ) {
+        this.totalVotos = totalVotos;
+        this.totalSim = totalSim;
+        this.totalNao = totalNao;
+        this.resultado = SessaoResultado.aPartirDe(resultado);
     }
 }
