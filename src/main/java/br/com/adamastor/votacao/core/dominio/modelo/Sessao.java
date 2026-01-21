@@ -29,7 +29,7 @@ public class Sessao {
 
     private Instant dataHoraTermino;
 
-    private SessaoStatusEnum status;
+    private SessaoStatus status;
 
     @Builder.Default
     private Integer totalVotos = 0;
@@ -40,10 +40,10 @@ public class Sessao {
     @Builder.Default
     private Integer totalNao = 0;
 
-    private String opcaoGanhadora;
+    private SessaoResultado opcaoGanhadora;
 
     public boolean isAberta() {
-        return SessaoStatusEnum.ABERTA.equals(this.status) &&
+        return SessaoStatus.ABERTA.equals(this.status) &&
                 Instant.now().isBefore(this.dataHoraTermino);
     }
 }

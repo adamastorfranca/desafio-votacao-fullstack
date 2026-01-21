@@ -7,7 +7,7 @@ import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioSessa
 import br.com.adamastor.votacao.core.dominio.excecao.EntidadeNaoEncontradaException;
 import br.com.adamastor.votacao.core.dominio.excecao.RegraNegocioException;
 import br.com.adamastor.votacao.core.dominio.modelo.Sessao;
-import br.com.adamastor.votacao.core.dominio.modelo.SessaoStatusEnum;
+import br.com.adamastor.votacao.core.dominio.modelo.SessaoStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +46,7 @@ public class AbrirSessaoCasoDeUsoImpl implements AbrirSessaoCasoDeUso {
                 .pautaId(dados.pautaId())
                 .dataHoraInicio(inicio)
                 .dataHoraTermino(termino)
-                .status(SessaoStatusEnum.ABERTA)
+                .status(SessaoStatus.ABERTA)
                 .build();
 
         var sessaoSalva = portaRepositorioSessao.salvar(sessao);

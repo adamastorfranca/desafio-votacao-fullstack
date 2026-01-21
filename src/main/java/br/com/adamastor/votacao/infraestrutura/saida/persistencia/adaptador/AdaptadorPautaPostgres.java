@@ -23,7 +23,6 @@ public class AdaptadorPautaPostgres implements PortaRepositorioPauta {
         log.debug("Adaptador: Iniciando persistência da pauta: {}", pauta.getTitulo());
 
         var entidade = mapper.paraEntidade(pauta);
-
         if (entidade.getId() == null) {
             entidade.setId(UUID.randomUUID());
         }

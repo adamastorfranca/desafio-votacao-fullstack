@@ -9,15 +9,16 @@ CREATE TABLE tb_pauta (
 CREATE TABLE tb_sessao (
     id_sessao UUID NOT NULL,
     id_pauta UUID NOT NULL,
-    dh_inicio TIMESTAMP,
-    dh_termino TIMESTAMP,
+    dh_inicio TIMESTAMP NOT NULL,
+    dh_termino TIMESTAMP NOT NULL,
     st_situacao VARCHAR(20) NOT NULL,
     nr_total_votos INTEGER DEFAULT 0,
     nr_total_sim INTEGER DEFAULT 0,
     nr_total_nao INTEGER DEFAULT 0,
     tx_opcao_ganhadora VARCHAR(20),
     CONSTRAINT pk_sessao PRIMARY KEY (id_sessao),
-    CONSTRAINT fk_sessao_pauta FOREIGN KEY (id_pauta) REFERENCES tb_pauta(id_pauta)
+    CONSTRAINT fk_sessao_pauta FOREIGN KEY (id_pauta) REFERENCES tb_pauta(id_pauta),
+    CONSTRAINT uk_sessao_pauta UNIQUE (id_pauta)
 );
 
 CREATE TABLE tb_voto (
