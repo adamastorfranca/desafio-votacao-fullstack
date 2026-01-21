@@ -6,10 +6,7 @@ import br.com.adamastor.votacao.core.aplicacao.caso_uso.RegistrarVotoCasoDeUsoIm
 import br.com.adamastor.votacao.core.aplicacao.porta.entrada.AbrirSessaoCasoDeUso;
 import br.com.adamastor.votacao.core.aplicacao.porta.entrada.CriarPautaCasoDeUso;
 import br.com.adamastor.votacao.core.aplicacao.porta.entrada.RegistrarVotoCasoDeUso;
-import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaIntegradorCpf;
-import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioPauta;
-import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioSessao;
-import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioVoto;
+import br.com.adamastor.votacao.core.aplicacao.porta.saida.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,8 +29,9 @@ public class ConfiguracaoVotacao {
     public RegistrarVotoCasoDeUso registrarVotoCasoDeUso(
             PortaRepositorioVoto portaRepositorioVoto,
             PortaRepositorioSessao portaRepositorioSessao,
-            PortaIntegradorCpf portaIntegradorCpf) {
-        return new RegistrarVotoCasoDeUsoImpl(portaRepositorioVoto, portaRepositorioSessao, portaIntegradorCpf);
+            PortaIntegradorCpf portaIntegradorCpf,
+            PortaPublicadorVoto portaPublicadorVoto) {
+        return new RegistrarVotoCasoDeUsoImpl(portaRepositorioVoto, portaRepositorioSessao, portaIntegradorCpf, portaPublicadorVoto);
     }
 
 }

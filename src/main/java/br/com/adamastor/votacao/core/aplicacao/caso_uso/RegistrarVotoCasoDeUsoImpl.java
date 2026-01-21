@@ -3,6 +3,7 @@ package br.com.adamastor.votacao.core.aplicacao.caso_uso;
 import br.com.adamastor.votacao.core.aplicacao.dto.DadosVotoDTO;
 import br.com.adamastor.votacao.core.aplicacao.porta.entrada.RegistrarVotoCasoDeUso;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaIntegradorCpf;
+import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaPublicadorVoto;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioSessao;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioVoto;
 import br.com.adamastor.votacao.core.dominio.excecao.EntidadeNaoEncontradaException;
@@ -21,6 +22,7 @@ public class RegistrarVotoCasoDeUsoImpl implements RegistrarVotoCasoDeUso {
     private final PortaRepositorioVoto portaRepositorioVoto;
     private final PortaRepositorioSessao portaRepositorioSessao;
     private final PortaIntegradorCpf portaIntegradorCpf;
+    private final PortaPublicadorVoto portaPublicadorVoto;
 
     @Override
     public Voto executar(DadosVotoDTO dados) {
@@ -51,11 +53,11 @@ public class RegistrarVotoCasoDeUsoImpl implements RegistrarVotoCasoDeUso {
                 .dataHoraCriacao(Instant.now())
                 .build();
 
-        var votoSalvo = portaRepositorioVoto.salvar(voto);
+        portaPublicadorVoto.publicar(voto);
 
-        log.info("Voto registrado com sucesso. ID: {}, Opção: {}", votoSalvo.getId(), votoSalvo.getOpcao());
+        log.info("Voto registrado com sucesso. ID: {}, Opção: {}", voto.getId(), voto.getOpcao());
 
-        return votoSalvo;
+        return voto;
     }
 }
 

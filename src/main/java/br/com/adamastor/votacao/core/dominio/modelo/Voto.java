@@ -1,10 +1,8 @@
 package br.com.adamastor.votacao.core.dominio.modelo;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.Instant;
 import java.util.UUID;

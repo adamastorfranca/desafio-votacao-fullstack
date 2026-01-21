@@ -23,7 +23,6 @@ public class AdaptadorIntegradorCpf implements PortaIntegradorCpf {
     public boolean podeVotar(String cpf) {
         log.info("Iniciando validação moderna de CPF: {}", cpf);
 
-        // A chamada é síncrona, mas escalável graças às Virtual Threads do Java 21+
         var resposta = cpfClienteApi.buscarStatusCpf(cpf);
 
         boolean apto = "ABLE_TO_VOTE".equals(resposta.getStatus());
@@ -32,10 +31,6 @@ public class AdaptadorIntegradorCpf implements PortaIntegradorCpf {
         return apto;
     }
 
-    /**
-     * Fallback Profissional: No cooperativismo, a assembleia não pode parar por falha técnica externa.
-     * Permitir o voto e logar o erro é uma decisão de negócio resiliente.
-     */
     public boolean podeVotarFallback(String cpf, Exception ex) {
         log.error("ERRO INTEGRACAO: Falha ao validar CPF {} após tentativas. Motivo: {}. Aplicando Fallback.",
                 cpf, ex.getMessage());
