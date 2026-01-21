@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -17,7 +18,9 @@ public class CriarPautaCasoDeUsoImpl implements CriarPautaCasoDeUso {
 
     @Override
     public Pauta executar(DadosCriacaoPautaDTO dadosCriacaoPautaDTO) {
-        log.info("Iniciando criação de nova pauta. Título: '{}'", dadosCriacaoPautaDTO.titulo());
+        var novoId = UUID.randomUUID();
+
+        log.info("Iniciando criação de nova pauta. ID gerado: {}, Título: '{}'", novoId, dadosCriacaoPautaDTO.titulo());
 
         var pauta = Pauta.builder()
                 .titulo(dadosCriacaoPautaDTO.titulo())
