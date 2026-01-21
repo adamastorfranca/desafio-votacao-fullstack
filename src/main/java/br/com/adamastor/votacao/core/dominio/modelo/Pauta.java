@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -24,6 +24,6 @@ public class Pauta {
     private UUID id;
     private String titulo;
     private String descricao;
-    private LocalDateTime dataHoraCriacao;
+    private Instant dataHoraCriacao;
 
 }

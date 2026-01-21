@@ -1,4 +1,4 @@
-package br.com.adamastor.votacao.votacao.core.aplicacao.porta.saida;
+package br.com.adamastor.votacao.core.aplicacao.porta.saida;
 
 import br.com.adamastor.votacao.core.dominio.modelo.Pauta;
 
