@@ -36,6 +36,6 @@ public class AdaptadorPautaPostgres implements PortaRepositorioPauta {
 
     @Override
     public boolean existePorId(UUID id) {
-        return false;
+        return repositorioPautaJpa.existsById(id);
     }
 }
