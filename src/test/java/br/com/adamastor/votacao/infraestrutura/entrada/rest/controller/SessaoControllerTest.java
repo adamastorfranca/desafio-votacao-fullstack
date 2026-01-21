@@ -1,23 +1,18 @@
 package br.com.adamastor.votacao.infraestrutura.entrada.rest.controller;
 
+import br.com.adamastor.votacao.config.BaseIntegrationTest;
 import br.com.adamastor.votacao.infraestrutura.entrada.rest.ApiConstantes;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.entidade.PautaEntidade;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.repositorio.RepositorioPautaJpa;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.repositorio.RepositorioSessaoJpa;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -26,38 +21,19 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
 @DisplayName("Testes de Integração - Controller de Sessão")
-class SessaoControllerTest {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class SessaoControllerTest extends BaseIntegrationTest {
 
     @Autowired
     private RepositorioSessaoJpa repositorioSessaoJpa;
 
     @Autowired
     private RepositorioPautaJpa repositorioPautaJpa;
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.flyway.enabled", () -> "true");
-    }
 
     @AfterEach
     void limparBancoDeDados() {
@@ -77,7 +53,7 @@ class SessaoControllerTest {
                 """.formatted(pauta.getId());
 
         // Act & Assert
-        mockMvc.perform(post(ApiConstantes.ROTA_SESSOES)
+        mockMvc.perform(post(ApiConstantes.ROTA_SESSOES_V1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requisicaoJson))
                 .andExpect(status().isCreated())
@@ -107,7 +83,7 @@ class SessaoControllerTest {
                 """.formatted(pauta.getId(), tempoMinutos);
 
         // Act & Assert
-        mockMvc.perform(post(ApiConstantes.ROTA_SESSOES)
+        mockMvc.perform(post(ApiConstantes.ROTA_SESSOES_V1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requisicaoJson))
                 .andExpect(status().isCreated())
@@ -134,7 +110,7 @@ class SessaoControllerTest {
                 """;
 
         // Act & Assert
-        mockMvc.perform(post(ApiConstantes.ROTA_SESSOES)
+        mockMvc.perform(post(ApiConstantes.ROTA_SESSOES_V1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requisicaoJson))
                 .andExpect(status().isBadRequest());

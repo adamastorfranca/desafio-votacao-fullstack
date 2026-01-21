@@ -1,56 +1,32 @@
 package br.com.adamastor.votacao.infraestrutura.entrada.rest.controller;
 
+import br.com.adamastor.votacao.config.BaseIntegrationTest;
 import br.com.adamastor.votacao.infraestrutura.entrada.rest.ApiConstantes;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.repositorio.RepositorioPautaJpa;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
 @Transactional
 @DisplayName("Testes de Integração - Controller de Pauta")
-class PautaControllerTest {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class PautaControllerTest extends BaseIntegrationTest {
 
     @Autowired
     private RepositorioPautaJpa repositorioPautaJpa;
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.flyway.enabled", () -> "true");
-    }
 
     @Test
     @DisplayName("Deve criar uma pauta com sucesso, retornar 201 Created e persistir no banco")
@@ -64,7 +40,7 @@ class PautaControllerTest {
         );
 
         // Act & Assert
-        mockMvc.perform(post(ApiConstantes.ROTA_PAUTAS)
+        mockMvc.perform(post(ApiConstantes.ROTA_PAUTAS_V1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pautaRequisicao)))
                 .andExpect(status().isCreated())
@@ -89,7 +65,7 @@ class PautaControllerTest {
         );
 
         // Act & Assert
-        mockMvc.perform(post(ApiConstantes.ROTA_PAUTAS)
+        mockMvc.perform(post(ApiConstantes.ROTA_PAUTAS_V1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pautaRequisicao)))
                 .andExpect(status().isBadRequest());
