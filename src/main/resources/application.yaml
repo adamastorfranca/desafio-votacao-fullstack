@@ -9,6 +9,8 @@ spring:
   threads:
     virtual:
       enabled: true
+  cache:
+    type: redis
 
 springdoc:
   swagger-ui:
@@ -17,3 +19,37 @@ springdoc:
     operations-sorter: method
   api-docs:
     path: /v3/api-docs
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      integracao-cpf:
+        registerHealthIndicator: true
+        slidingWindowSize: 100
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      integracao-cpf:
+        maxAttempts: 3
+        waitDuration: 100
+        retryExceptions:
+          - java.io.IOException
+
+integracao:
+  cpf:
+    url: https://user-info.herokuapp.com
+
+feign:
+  circuitbreaker:
+    enabled: true
+  client:
+    config:
+      clienteCpf:
+        connectTimeout: 5000
+        readTimeout: 5000
+
+

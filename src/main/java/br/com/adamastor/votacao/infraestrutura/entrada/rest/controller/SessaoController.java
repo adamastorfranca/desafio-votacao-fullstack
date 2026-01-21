@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @RestController
-@RequestMapping(ApiConstantes.ROTA_SESSOES)
+@RequestMapping(ApiConstantes.ROTA_SESSOES_V1)
 @RequiredArgsConstructor
+@Transactional
 @Tag(name = "Sessões", description = "Gerenciamento de abertura de sessões de votação")
 public class SessaoController {
 
@@ -37,7 +39,7 @@ public class SessaoController {
         var resposta = mapper.paraResposta(sessaoAberta);
 
         var uri = uriBuilder
-                .path(ApiConstantes.ROTA_SESSOES + "/{id}")
+                .path(ApiConstantes.ROTA_SESSOES_V1 + "/{id}")
                 .buildAndExpand(sessaoAberta.getId())
                 .toUri();
 

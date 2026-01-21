@@ -5,3 +5,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     show-sql: false
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}

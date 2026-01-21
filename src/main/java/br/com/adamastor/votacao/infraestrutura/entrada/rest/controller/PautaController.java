@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @RestController
-@RequestMapping(ApiConstantes.ROTA_PAUTAS)
+@RequestMapping(ApiConstantes.ROTA_PAUTAS_V1)
 @RequiredArgsConstructor
+@Transactional
 @Tag(name = "Pautas", description = "Gerenciamento de pautas para votação")
 public class PautaController {
 
@@ -37,7 +39,7 @@ public class PautaController {
         var resposta = mapper.paraResposta(pautaCriada);
 
         var uri = uriBuilder
-                .path(ApiConstantes.ROTA_PAUTAS + "/{id}")
+                .path(ApiConstantes.ROTA_PAUTAS_V1 + "/{id}")
                 .buildAndExpand(pautaCriada.getId())
                 .toUri();
 
