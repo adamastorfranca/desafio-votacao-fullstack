@@ -1,5 +1,6 @@
 package br.com.adamastor.votacao.infraestrutura.saida.persistencia.adaptador;
 
+import br.com.adamastor.votacao.core.aplicacao.dto.ContagemVotosDTO;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioVoto;
 import br.com.adamastor.votacao.core.dominio.modelo.Voto;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.mapper.VotoPersistenciaMapper;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -36,5 +38,13 @@ public class AdaptadorVotoPostgres implements PortaRepositorioVoto {
 
         return repositorioVotoJpa.existsBySessaoIdAndCpfAssociado(sessaoId, cpfAssociado);
     }
+
+    @Override
+    public List<ContagemVotosDTO> contarVotosPorOpcao(UUID sessaoId) {
+        log.debug("Adaptador: Realizando contagem agregada de votos para sessão: {}", sessaoId);
+
+        return repositorioVotoJpa.contarVotosAgrupadosPorOpcao(sessaoId);
+    }
+
 }
 

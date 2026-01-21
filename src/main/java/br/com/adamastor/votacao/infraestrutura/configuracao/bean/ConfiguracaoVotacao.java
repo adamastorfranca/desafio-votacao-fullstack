@@ -2,9 +2,11 @@ package br.com.adamastor.votacao.infraestrutura.configuracao.bean;
 
 import br.com.adamastor.votacao.core.aplicacao.caso_uso.AbrirSessaoCasoDeUsoImpl;
 import br.com.adamastor.votacao.core.aplicacao.caso_uso.CriarPautaCasoDeUsoImpl;
+import br.com.adamastor.votacao.core.aplicacao.caso_uso.ProcessarSessoesEncerradasCasoDeUsoImpl;
 import br.com.adamastor.votacao.core.aplicacao.caso_uso.RegistrarVotoCasoDeUsoImpl;
 import br.com.adamastor.votacao.core.aplicacao.porta.entrada.AbrirSessaoCasoDeUso;
 import br.com.adamastor.votacao.core.aplicacao.porta.entrada.CriarPautaCasoDeUso;
+import br.com.adamastor.votacao.core.aplicacao.porta.entrada.ProcessarSessoesEncerradasCasoDeUso;
 import br.com.adamastor.votacao.core.aplicacao.porta.entrada.RegistrarVotoCasoDeUso;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.*;
 import org.springframework.context.annotation.Bean;
@@ -34,4 +36,11 @@ public class ConfiguracaoVotacao {
         return new RegistrarVotoCasoDeUsoImpl(portaRepositorioVoto, portaRepositorioSessao, portaIntegradorCpf, portaPublicadorVoto);
     }
 
+    @Bean
+    public ProcessarSessoesEncerradasCasoDeUso processarSessoesEncerradasCasoDeUso(
+            PortaRepositorioSessao portaRepositorioSessao,
+            PortaRepositorioVoto portaRepositorioVoto,
+            PortaPublicadorResultado portaPublicadorResultado) {
+        return new ProcessarSessoesEncerradasCasoDeUsoImpl(portaRepositorioSessao, portaRepositorioVoto, portaPublicadorResultado);
+    }
 }

@@ -22,12 +22,13 @@ public class AdaptadorPublicadorVotoKafka implements PortaPublicadorVoto {
     public void publicar(Voto voto) {
         var mensagem = mapper.paraMensagem(voto);
 
-        kafkaTemplate.send(ConfiguracaoKafka.TOPICO_VOTOS, voto.getId().toString(), mensagem)
-                .whenComplete((resultado, ex) -> {
-                    if (ex != null) {
-                        log.error("Erro ao publicar voto no Kafka. ID: {}", voto.getId(), ex);
-                        throw new RuntimeException("Falha ao enviar voto para processamento", ex);
-                    }
-                });
+        try {
+            kafkaTemplate.send(ConfiguracaoKafka.TOPICO_VOTOS, voto.getId().toString(), mensagem)
+                    .get();
+            log.debug("Voto publicado com sucesso no Kafka. ID: {}", voto.getId());
+        } catch (Exception e) {
+            log.error("Erro ao publicar voto no Kafka. ID: {}", voto.getId(), e);
+            throw new RuntimeException("Falha ao enviar voto para processamento", e);
+        }
     }
 }

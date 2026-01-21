@@ -8,10 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface SessaoPersistenciaMapper {
 
-    @Mapping(target = "resultado", source = "opcaoGanhadora")
     SessaoEntidade paraEntidade(Sessao sessao);
 
-    @Mapping(target = "opcaoGanhadora", source = "resultado")
     Sessao paraDominio(SessaoEntidade entidade);
 
 }

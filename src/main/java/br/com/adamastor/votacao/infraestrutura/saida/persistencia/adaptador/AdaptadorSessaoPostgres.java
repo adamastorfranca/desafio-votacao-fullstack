@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,5 +48,10 @@ public class AdaptadorSessaoPostgres implements PortaRepositorioSessao {
 
         return repositorioSessaoJpa.findById(sessaoId)
                 .map(mapper::paraDominio);
+    }
+
+    @Override
+    public List<Sessao> buscarSessoesEncerradasNaoContabilizadas() {
+        return List.of();
     }
 }
