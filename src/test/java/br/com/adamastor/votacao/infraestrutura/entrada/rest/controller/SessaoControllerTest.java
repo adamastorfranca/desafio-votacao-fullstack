@@ -91,11 +91,9 @@ class SessaoControllerTest extends BaseIntegrationTest {
 
         var sessaoSalva = repositorioSessaoJpa.findAll().getFirst();
         assertNotNull(sessaoSalva.getDataHoraTermino());
-        // Verificação aproximada do tempo (pode haver milissegundos de diferença)
         var duracaoEsperadaSegundos = tempoMinutos * 60;
         var duracaoReal = Duration.between(sessaoSalva.getDataHoraInicio(), sessaoSalva.getDataHoraTermino());
 
-        // Aceitamos uma margem de erro pequena (ex: 1 ou 2 segundos) devido ao tempo de execução
         assertEquals(duracaoEsperadaSegundos, duracaoReal.toSeconds(), 2L, "A duração da sessão deve corresponder ao tempo solicitado");
     }
 

@@ -4,11 +4,17 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+    clean-disabled: false
   threads:
     virtual:
       enabled: true
   cache:
-    type: simple
+    type: redis
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
   jpa:
     open-in-view: false
     hibernate:
@@ -21,6 +27,18 @@ spring:
     redis:
       host: localhost
       port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: grupo-teste
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 springdoc:
   swagger-ui:
@@ -31,17 +49,17 @@ resilience4j:
     instances:
       integracao-cpf:
         registerHealthIndicator: true
-        slidingWindowSize: 100
+        slidingWindowSize: 10
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 10s
+        waitDurationInOpenState: 1s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
   retry:
     instances:
       integracao-cpf:
-        maxAttempts: 3
-        waitDuration: 100
+        maxAttempts: 2
+        waitDuration: 50
         retryExceptions:
           - java.io.IOException
 
@@ -52,4 +70,8 @@ integracao:
 feign:
   circuitbreaker:
     enabled: true
-
+  client:
+    config:
+      clienteCpf:
+        connectTimeout: 1000
+        readTimeout: 1000

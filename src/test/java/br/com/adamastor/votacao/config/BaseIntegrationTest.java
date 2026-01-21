@@ -10,8 +10,10 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Slf4j
 @SpringBootTest
@@ -24,6 +26,7 @@ public abstract class BaseIntegrationTest {
 
     static PostgreSQLContainer<?> postgres;
     static GenericContainer<?> redis;
+    static KafkaContainer kafka;
 
     static {
         if (DOCKER_DISPONIVEL) {
@@ -56,8 +59,11 @@ public abstract class BaseIntegrationTest {
         redis = new GenericContainer<>("redis:7-alpine")
                 .withExposedPorts(6379);
 
+        kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.5.0"));
+
         postgres.start();
         redis.start();
+        kafka.start();
     }
 
     private static void inicializarBancoEmMemoria() {
@@ -89,10 +95,13 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.data.redis.host", redis::getHost);
         registry.add("spring.data.redis.port", redis::getFirstMappedPort);
 
-        log.info("TestContainers configurado: PostgreSQL em {} e Redis em {}:{}",
+        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+
+        log.info("TestContainers configurado: PostgreSQL em {}, Redis em {}:{}, Kafka em {}",
                 postgres.getJdbcUrl(),
                 redis.getHost(),
-                redis.getFirstMappedPort());
+                redis.getFirstMappedPort(),
+                kafka.getBootstrapServers());
     }
 
     private static void configurarH2EmMemoria(DynamicPropertyRegistry registry) {
@@ -106,6 +115,8 @@ public abstract class BaseIntegrationTest {
 
         registry.add("spring.data.redis.host", () -> "localhost");
         registry.add("spring.data.redis.port", () -> "6379");
+
+        registry.add("spring.kafka.bootstrap-servers", () -> "localhost:9092");
 
         log.info("H2 em-memória configurado para ambiente local sem Docker.");
     }
