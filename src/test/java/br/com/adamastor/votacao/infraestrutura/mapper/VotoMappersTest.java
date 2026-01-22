@@ -4,7 +4,6 @@ import br.com.adamastor.votacao.core.dominio.modelo.Voto;
 import br.com.adamastor.votacao.core.dominio.modelo.VotoOpcao;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.entidade.VotoEntidade;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.mapper.VotoPersistenciaMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;

@@ -4,9 +4,10 @@ import br.com.adamastor.votacao.core.aplicacao.dto.ResultadoVotacaoDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -22,14 +23,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @DisplayName("Testes do Adaptador Publicador de Resultado no Kafka")
 class AdaptadorPublicadorResultadoKafkaTest {
 
-    @Autowired
+    @InjectMocks
     private AdaptadorPublicadorResultadoKafka adaptador;
 
-    @MockBean
+    @Mock
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private final String TOPICO_RESULTADO = "sessao-resultado-topic-teste";

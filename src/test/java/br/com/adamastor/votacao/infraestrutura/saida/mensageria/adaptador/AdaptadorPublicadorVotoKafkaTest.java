@@ -5,6 +5,7 @@ import br.com.adamastor.votacao.core.dominio.modelo.VotoOpcao;
 import br.com.adamastor.votacao.infraestrutura.saida.mensageria.dto.VotoMensagemDTO;
 import br.com.adamastor.votacao.infraestrutura.saida.mensageria.mapper.VotoMensagemMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Testes do Adaptador Publicador de voto no Kafka")
 class AdaptadorPublicadorVotoKafkaTest {
 
     @InjectMocks
