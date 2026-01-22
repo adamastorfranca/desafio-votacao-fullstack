@@ -4,21 +4,19 @@ import br.com.adamastor.votacao.core.dominio.modelo.Voto;
 import br.com.adamastor.votacao.core.dominio.modelo.VotoOpcao;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.entidade.VotoEntidade;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.mapper.VotoPersistenciaMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mapstruct.factory.Mappers;
 
 import java.time.Instant;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 class VotoMappersTest {
 
-    @Autowired
-    private VotoPersistenciaMapper mapper;
+    private final VotoPersistenciaMapper mapper = Mappers.getMapper(VotoPersistenciaMapper.class);
 
     @Test
     @DisplayName("Deve mapear Voto para VotoEntidade corretamente")

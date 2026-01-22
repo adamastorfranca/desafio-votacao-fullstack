@@ -2,6 +2,7 @@ package br.com.adamastor.votacao.core.aplicacao.caso_uso;
 
 import br.com.adamastor.votacao.core.aplicacao.dto.DadosVotoDTO;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaIntegradorCpf;
+import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaPublicadorVoto;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioSessao;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioVoto;
 import br.com.adamastor.votacao.core.dominio.excecao.EntidadeNaoEncontradaException;
@@ -41,6 +42,9 @@ class RegistrarVotoCasoDeUsoImplTest {
     @Mock
     private PortaIntegradorCpf portaIntegradorCpf;
 
+    @Mock
+    private PortaPublicadorVoto portaPublicadorVoto;
+
     @InjectMocks
     private RegistrarVotoCasoDeUsoImpl casoDeUso;
 
@@ -58,18 +62,9 @@ class RegistrarVotoCasoDeUsoImplTest {
                 .dataHoraTermino(Instant.now().plusSeconds(3600))
                 .build();
 
-        var votoSalvo = Voto.builder()
-                .id(UUID.randomUUID())
-                .sessaoId(sessaoId)
-                .cpfAssociado(cpf)
-                .opcao(VotoOpcao.SIM)
-                .dataHoraCriacao(Instant.now())
-                .build();
-
         when(portaRepositorioSessao.obterPorId(sessaoId)).thenReturn(Optional.of(sessao));
         when(portaRepositorioVoto.existeVotoDoAssociadoNaSessao(sessaoId, cpf)).thenReturn(false);
         when(portaIntegradorCpf.podeVotar(cpf)).thenReturn(true);
-        when(portaRepositorioVoto.salvar(any(Voto.class))).thenReturn(votoSalvo);
 
         var resultado = casoDeUso.executar(dados);
 
@@ -77,13 +72,15 @@ class RegistrarVotoCasoDeUsoImplTest {
         assertThat(resultado.getId()).isNotNull();
         assertThat(resultado.getCpfAssociado()).isEqualTo(cpf);
         assertThat(resultado.getOpcao()).isEqualTo(VotoOpcao.SIM);
+        assertThat(resultado.getSessaoId()).isEqualTo(sessaoId);
 
         var votoCaptor = ArgumentCaptor.forClass(Voto.class);
-        verify(portaRepositorioVoto).salvar(votoCaptor.capture());
+        verify(portaPublicadorVoto).publicar(votoCaptor.capture());
 
         var votoCapturado = votoCaptor.getValue();
         assertThat(votoCapturado.getSessaoId()).isEqualTo(sessaoId);
         assertThat(votoCapturado.getCpfAssociado()).isEqualTo(cpf);
+        assertThat(votoCapturado.getOpcao()).isEqualTo(VotoOpcao.SIM);
         assertThat(votoCapturado.getDataHoraCriacao()).isNotNull();
     }
 
@@ -100,7 +97,7 @@ class RegistrarVotoCasoDeUsoImplTest {
                 .isInstanceOf(EntidadeNaoEncontradaException.class)
                 .hasMessageContaining("Sessão não encontrada");
 
-        verify(portaRepositorioVoto, never()).salvar(any());
+        verify(portaPublicadorVoto, never()).publicar(any());
     }
 
     @Test
@@ -122,7 +119,7 @@ class RegistrarVotoCasoDeUsoImplTest {
                 .isInstanceOf(RegraNegocioException.class)
                 .hasMessageContaining("não está aberta");
 
-        verify(portaRepositorioVoto, never()).salvar(any());
+        verify(portaPublicadorVoto, never()).publicar(any());
     }
 
     @Test
@@ -145,7 +142,7 @@ class RegistrarVotoCasoDeUsoImplTest {
                 .isInstanceOf(RegraNegocioException.class)
                 .hasMessageContaining("já votou");
 
-        verify(portaRepositorioVoto, never()).salvar(any());
+        verify(portaPublicadorVoto, never()).publicar(any());
     }
 
     @Test
@@ -169,7 +166,7 @@ class RegistrarVotoCasoDeUsoImplTest {
                 .isInstanceOf(RegraNegocioException.class)
                 .hasMessageContaining("não está autorizado");
 
-        verify(portaRepositorioVoto, never()).salvar(any());
+        verify(portaPublicadorVoto, never()).publicar(any());
     }
 
 }

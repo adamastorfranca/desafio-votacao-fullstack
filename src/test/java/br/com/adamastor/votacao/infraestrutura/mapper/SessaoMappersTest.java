@@ -103,10 +103,10 @@ class SessaoMappersTest {
                 .dataHoraInicio(dataHoraInicio)
                 .dataHoraTermino(dataHoraTermino)
                 .status(SessaoStatus.ABERTA)
-                .totalVotos(10)
-                .totalSim(7)
-                .totalNao(3)
-                .opcaoGanhadora(SessaoResultado.SIM)
+                .totalVotos(10L)
+                .totalSim(7L)
+                .totalNao(3L)
+                .resultado(SessaoResultado.APROVADA)
                 .build();
 
         SessaoEntidade entidade = persistenciaMapper.paraEntidade(sessao);
@@ -116,10 +116,10 @@ class SessaoMappersTest {
         assertThat(entidade.getDataHoraInicio()).isEqualTo(dataHoraInicio);
         assertThat(entidade.getDataHoraTermino()).isEqualTo(dataHoraTermino);
         assertThat(entidade.getStatus()).isEqualTo(SessaoStatus.ABERTA);
-        assertThat(entidade.getTotalVotos()).isEqualTo(10);
-        assertThat(entidade.getTotalSim()).isEqualTo(7);
-        assertThat(entidade.getTotalNao()).isEqualTo(3);
-        assertThat(entidade.getResultado()).isEqualTo(SessaoResultado.SIM);
+        assertThat(entidade.getTotalVotos()).isEqualTo(10L);
+        assertThat(entidade.getTotalSim()).isEqualTo(7L);
+        assertThat(entidade.getTotalNao()).isEqualTo(3L);
+        assertThat(entidade.getResultado()).isEqualTo(SessaoResultado.APROVADA);
     }
 
     @Test
@@ -131,12 +131,12 @@ class SessaoMappersTest {
                 .dataHoraInicio(Instant.now())
                 .dataHoraTermino(Instant.now().plusSeconds(300))
                 .status(SessaoStatus.FECHADA)
-                .opcaoGanhadora(SessaoResultado.NAO)
+                .resultado(SessaoResultado.REPROVADA)
                 .build();
 
         SessaoEntidade entidade = persistenciaMapper.paraEntidade(sessao);
 
-        assertThat(entidade.getResultado()).isEqualTo(SessaoResultado.NAO);
+        assertThat(entidade.getResultado()).isEqualTo(SessaoResultado.REPROVADA);
     }
 
     @Test
@@ -156,7 +156,7 @@ class SessaoMappersTest {
                 .totalVotos(5)
                 .totalSim(3)
                 .totalNao(2)
-                .resultado(SessaoResultado.SIM)
+                .resultado(SessaoResultado.APROVADA)
                 .build();
 
         Sessao sessao = persistenciaMapper.paraDominio(entidade);
@@ -169,7 +169,7 @@ class SessaoMappersTest {
         assertThat(sessao.getTotalVotos()).isEqualTo(5);
         assertThat(sessao.getTotalSim()).isEqualTo(3);
         assertThat(sessao.getTotalNao()).isEqualTo(2);
-        assertThat(sessao.getOpcaoGanhadora()).isEqualTo(SessaoResultado.SIM);
+        assertThat(sessao.getResultado()).isEqualTo(SessaoResultado.APROVADA);
     }
 
     @Test
@@ -181,12 +181,12 @@ class SessaoMappersTest {
                 .dataHoraInicio(Instant.now())
                 .dataHoraTermino(Instant.now().plusSeconds(300))
                 .status(SessaoStatus.ABERTA)
-                .resultado(SessaoResultado.NAO)
+                .resultado(SessaoResultado.REPROVADA)
                 .build();
 
         Sessao sessao = persistenciaMapper.paraDominio(entidade);
 
-        assertThat(sessao.getOpcaoGanhadora()).isEqualTo(SessaoResultado.NAO);
+        assertThat(sessao.getResultado()).isEqualTo(SessaoResultado.REPROVADA);
     }
 
     @Test
@@ -203,7 +203,7 @@ class SessaoMappersTest {
 
         Sessao sessao = persistenciaMapper.paraDominio(entidade);
 
-        assertThat(sessao.getOpcaoGanhadora()).isNull();
+        assertThat(sessao.getResultado()).isNull();
     }
 }
 

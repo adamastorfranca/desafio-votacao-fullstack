@@ -45,9 +45,9 @@ class AdaptadorSessaoPostgresTest {
                 .dataHoraInicio(agora)
                 .dataHoraTermino(futuro)
                 .status(SessaoStatus.ABERTA)
-                .totalVotos(0)
-                .totalSim(0)
-                .totalNao(0)
+                .totalVotos(0L)
+                .totalSim(0L)
+                .totalNao(0L)
                 .build();
 
         var entidadeSemId = new SessaoEntidade();
@@ -96,9 +96,9 @@ class AdaptadorSessaoPostgresTest {
                 .dataHoraInicio(agora)
                 .dataHoraTermino(futuro)
                 .status(SessaoStatus.ABERTA)
-                .totalVotos(5)
-                .totalSim(3)
-                .totalNao(2)
+                .totalVotos(5L)
+                .totalSim(3L)
+                .totalNao(2L)
                 .build();
 
         var entidadeComId = new SessaoEntidade();
@@ -174,9 +174,9 @@ class AdaptadorSessaoPostgresTest {
                 .dataHoraInicio(passado)
                 .dataHoraTermino(agora)
                 .status(SessaoStatus.FECHADA)
-                .totalVotos(10)
-                .totalSim(6)
-                .totalNao(4)
+                .totalVotos(10L)
+                .totalSim(6L)
+                .totalNao(4L)
                 .build();
 
         var entidadeFechada = new SessaoEntidade();

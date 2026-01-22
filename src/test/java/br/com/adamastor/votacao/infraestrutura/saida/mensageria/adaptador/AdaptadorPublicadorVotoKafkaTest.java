@@ -2,9 +2,9 @@ package br.com.adamastor.votacao.infraestrutura.saida.mensageria.adaptador;
 
 import br.com.adamastor.votacao.core.dominio.modelo.Voto;
 import br.com.adamastor.votacao.core.dominio.modelo.VotoOpcao;
-import br.com.adamastor.votacao.infraestrutura.configuracao.bean.ConfiguracaoKafka;
 import br.com.adamastor.votacao.infraestrutura.saida.mensageria.dto.VotoMensagemDTO;
 import br.com.adamastor.votacao.infraestrutura.saida.mensageria.mapper.VotoMensagemMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -34,6 +35,13 @@ class AdaptadorPublicadorVotoKafkaTest {
 
     @Mock
     private VotoMensagemMapper mapper;
+
+    private final String TOPICO_TESTE = "votos-topic-teste";
+
+    @BeforeEach
+    void setup() {
+        ReflectionTestUtils.setField(adaptador, "topicoVotos", TOPICO_TESTE);
+    }
 
     @Test
     void devePublicarVotoComSucesso() {
@@ -62,7 +70,7 @@ class AdaptadorPublicadorVotoKafkaTest {
 
         verify(mapper).paraMensagem(voto);
         verify(kafkaTemplate).send(
-                eq(ConfiguracaoKafka.TOPICO_VOTOS),
+                eq(TOPICO_TESTE),
                 eq(voto.getId().toString()),
                 eq(mensagemDTO)
         );

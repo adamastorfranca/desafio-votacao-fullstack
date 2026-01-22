@@ -30,8 +30,10 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: grupo-teste
+      group-id: votacao-group-test
       auto-offset-reset: earliest
+      max-poll-records: 500
+      enable-auto-commit: true
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -39,6 +41,13 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+    listener:
+      ack-mode: batch
+      concurrency: 1
+      type: batch
+  topics:
+    auto-create: true
 
 springdoc:
   swagger-ui:
@@ -66,6 +75,9 @@ resilience4j:
 integracao:
   cpf:
     url: https://user-info.herokuapp.com
+  kafka:
+    topic-votos: votos-registrados-topic
+    topic-resultado-sessao: sessao-resultado-topic
 
 feign:
   circuitbreaker:

@@ -10,7 +10,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.kafka.KafkaContainer;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -40,6 +40,7 @@ public abstract class BaseIntegrationTest {
     private static boolean verificarDockerDisponivel() {
         try {
             Class.forName("org.testcontainers.dockerclient.DockerClientFactory");
+            @SuppressWarnings("resource")
             var dockerClient = org.testcontainers.DockerClientFactory.instance().client();
             dockerClient.infoCmd().exec();
             log.info("Docker detectado e disponível para testes.");
@@ -50,6 +51,7 @@ public abstract class BaseIntegrationTest {
         }
     }
 
+    @SuppressWarnings("resource")
     private static void inicializarTestContainers() {
         postgres = new PostgreSQLContainer<>("postgres:16-alpine")
                 .withDatabaseName("votacao_test")
@@ -77,6 +79,7 @@ public abstract class BaseIntegrationTest {
     protected ObjectMapper objectMapper;
 
     @DynamicPropertySource
+    @SuppressWarnings("unused")
     static void configureProperties(DynamicPropertyRegistry registry) {
         if (DOCKER_DISPONIVEL) {
             configurarTestContainers(registry);
@@ -95,13 +98,14 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.data.redis.host", redis::getHost);
         registry.add("spring.data.redis.port", redis::getFirstMappedPort);
 
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", () -> kafka.getHost() + ":" + kafka.getFirstMappedPort());
 
-        log.info("TestContainers configurado: PostgreSQL em {}, Redis em {}:{}, Kafka em {}",
+        log.info("TestContainers configurado: PostgreSQL em {}, Redis em {}:{}, Kafka em {}:{}",
                 postgres.getJdbcUrl(),
                 redis.getHost(),
                 redis.getFirstMappedPort(),
-                kafka.getBootstrapServers());
+                kafka.getHost(),
+                kafka.getFirstMappedPort());
     }
 
     private static void configurarH2EmMemoria(DynamicPropertyRegistry registry) {

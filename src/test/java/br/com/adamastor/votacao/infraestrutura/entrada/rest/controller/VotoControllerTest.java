@@ -16,12 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestPropertySource(properties = "spring.kafka.consumer.group-id=test-group-${random.uuid}")
 @DisplayName("Testes de Integração - Controller de Voto")
 class VotoControllerTest extends BaseIntegrationTest {
 
@@ -62,22 +68,19 @@ class VotoControllerTest extends BaseIntegrationTest {
                 }
                 """.formatted(cpf);
 
-        // Act & Assert
+        // Act
         mockMvc.perform(post(ApiConstantes.RECURSO_VOTOS_V1.replace("{sessaoId}", sessao.getId().toString()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requisicaoJson))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.sessaoId").value(sessao.getId().toString()))
-                .andExpect(jsonPath("$.cpfAssociado").value(cpf))
-                .andExpect(jsonPath("$.opcao").value("SIM"))
-                .andExpect(jsonPath("$.dataHoraCriacao").isNotEmpty());
+                .andExpect(status().isCreated());
 
-        var votosSalvos = repositorioVotoJpa.findAll();
-        assertEquals(1, votosSalvos.size(), "Deve haver exatamente um voto no banco");
-        assertEquals(cpf, votosSalvos.getFirst().getCpfAssociado());
-        assertEquals(VotoOpcao.SIM, votosSalvos.getFirst().getOpcao());
+        // Assert
+        await().atMost(5, SECONDS).untilAsserted(() -> {
+            var votosSalvos = repositorioVotoJpa.findAll();
+            assertEquals(1, votosSalvos.size(), "Deve haver exatamente um voto no banco após processamento async");
+            assertEquals(cpf, votosSalvos.getFirst().getCpfAssociado());
+            assertEquals(VotoOpcao.SIM, votosSalvos.getFirst().getOpcao());
+        });
     }
 
     @Test
@@ -94,15 +97,18 @@ class VotoControllerTest extends BaseIntegrationTest {
                 }
                 """.formatted(cpf);
 
-        // Act & Assert
+        // Act
         mockMvc.perform(post(ApiConstantes.RECURSO_VOTOS_V1.replace("{sessaoId}", sessao.getId().toString()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requisicaoJson))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.opcao").value("NAO"));
+                .andExpect(status().isCreated());
 
-        var votosSalvos = repositorioVotoJpa.findAll();
-        assertEquals(VotoOpcao.NAO, votosSalvos.getFirst().getOpcao());
+        // Assert
+        await().atMost(5, SECONDS).untilAsserted(() -> {
+            var votosSalvos = repositorioVotoJpa.findAll();
+            assertEquals(1, votosSalvos.size());
+            assertEquals(VotoOpcao.NAO, votosSalvos.get(0).getOpcao());
+        });
     }
 
     @Test
