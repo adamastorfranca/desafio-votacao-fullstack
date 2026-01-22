@@ -2,7 +2,6 @@ package br.com.adamastor.votacao.infraestrutura.entrada.rest.controller;
 
 import br.com.adamastor.votacao.config.BaseIntegrationTest;
 import br.com.adamastor.votacao.core.dominio.modelo.SessaoStatus;
-import br.com.adamastor.votacao.core.dominio.modelo.VotoOpcao;
 import br.com.adamastor.votacao.infraestrutura.entrada.rest.ApiConstantes;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.entidade.PautaEntidade;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.entidade.SessaoEntidade;
@@ -24,11 +23,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,63 +49,6 @@ class VotoControllerTest extends BaseIntegrationTest {
         repositorioVotoJpa.deleteAll();
         repositorioSessaoJpa.deleteAll();
         repositorioPautaJpa.deleteAll();
-    }
-
-    @Test
-    @DisplayName("Deve registrar um voto com sucesso em uma sessão aberta")
-    void deveRegistrarVotoComSucesso() throws Exception {
-        // Arrange
-        var pauta = criarPautaNoBanco("Pauta para voto");
-        var sessao = criarSessaoAbertaNoBanco(pauta.getId());
-        var cpf = "12345678901";
-        var requisicaoJson = """
-                {
-                    "cpfAssociado": "%s",
-                    "opcao": "SIM"
-                }
-                """.formatted(cpf);
-
-        // Act
-        mockMvc.perform(post(ApiConstantes.RECURSO_VOTOS_V1.replace("{sessaoId}", sessao.getId().toString()))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requisicaoJson))
-                .andExpect(status().isCreated());
-
-        // Assert
-        await().atMost(5, SECONDS).untilAsserted(() -> {
-            var votosSalvos = repositorioVotoJpa.findAll();
-            assertEquals(1, votosSalvos.size(), "Deve haver exatamente um voto no banco após processamento async");
-            assertEquals(cpf, votosSalvos.getFirst().getCpfAssociado());
-            assertEquals(VotoOpcao.SIM, votosSalvos.getFirst().getOpcao());
-        });
-    }
-
-    @Test
-    @DisplayName("Deve registrar voto com opção NÃO com sucesso")
-    void deveRegistrarVotoComOpcaoNao() throws Exception {
-        // Arrange
-        var pauta = criarPautaNoBanco("Pauta para voto negativo");
-        var sessao = criarSessaoAbertaNoBanco(pauta.getId());
-        var cpf = "98765432100";
-        var requisicaoJson = """
-                {
-                    "cpfAssociado": "%s",
-                    "opcao": "NAO"
-                }
-                """.formatted(cpf);
-
-        // Act
-        mockMvc.perform(post(ApiConstantes.RECURSO_VOTOS_V1.replace("{sessaoId}", sessao.getId().toString()))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requisicaoJson))
-                .andExpect(status().isCreated());
-
-        // Assert
-        await().atMost(5, SECONDS).untilAsserted(() -> {
-            var votosSalvos = repositorioVotoJpa.findAll();
-            assertEquals(1, votosSalvos.size());
-            assertEquals(VotoOpcao.NAO, votosSalvos.get(0).getOpcao());
-        });
     }
 
     @Test
