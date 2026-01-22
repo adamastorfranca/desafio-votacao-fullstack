@@ -35,6 +35,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Conceder permissão de execução ao mvnw
+        run: chmod +x ./mvnw
+
       - name: Executar testes com Maven
         run: ./mvnw verify -B -e
 
@@ -64,6 +67,9 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: maven
+
+      - name: Conceder permissão de execução ao mvnw
+        run: chmod +x ./mvnw
 
       - name: Build com Spring Boot Maven Plugin
         run: ./mvnw clean package -DskipTests -B
