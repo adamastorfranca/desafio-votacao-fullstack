@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,7 +43,7 @@ public class ProcessarSessoesEncerradasCasoDeUsoImpl implements ProcessarSessoes
             log.info("Processando resultados da sessão ID: {}", sessao.getId());
 
             var contagem = portaRepositorioVoto.contarVotosPorOpcao(sessao.getId());
-            var resultadoCalculado = calcularResultado(contagem);
+            var resultadoCalculado = calcularEstatisticas(contagem);
 
             sessao.registrarResultado(
                     resultadoCalculado.totalVotos(),
@@ -59,29 +61,29 @@ public class ProcessarSessoesEncerradasCasoDeUsoImpl implements ProcessarSessoes
         }
     }
 
-    private ResultadoVotacaoDTO calcularResultado(List<ContagemVotosDTO> contagem) {
-        long sim = 0;
-        long nao = 0;
+    private ResultadoVotacaoDTO calcularEstatisticas(List<ContagemVotosDTO> votos) {
+        Map<VotoOpcao, Long> mapaVotos = votos.stream()
+                .collect(Collectors.toMap(ContagemVotosDTO::opcao, ContagemVotosDTO::quantidade));
 
-        for (ContagemVotosDTO c : contagem) {
-            if (VotoOpcao.SIM.equals(c.opcao())) {
-                sim = c.quantidade();
-            } else if (VotoOpcao.NAO.equals(c.opcao())) {
-                nao = c.quantidade();
-            }
+        long votosSim = mapaVotos.getOrDefault(VotoOpcao.SIM, 0L);
+        long votosNao = mapaVotos.getOrDefault(VotoOpcao.NAO, 0L);
+        long totalVotos = votosSim + votosNao;
+
+        String decisao = obterDecisao(votosSim, votosNao, totalVotos);
+
+        return new ResultadoVotacaoDTO(totalVotos, votosSim, votosNao, decisao);
+    }
+
+    private String obterDecisao(long votosSim, long votosNao, long totalVotos) {
+        if (totalVotos == 0) {
+            return SessaoResultado.SEM_VOTOS.name();
         }
-
-        long total = sim + nao;
-        String decisao;
-
-        if (sim > nao) {
-            decisao = SessaoResultado.APROVADA.getDescricao();
-        } else if (nao > sim) {
-            decisao = SessaoResultado.REPROVADA.getDescricao();
-        } else {
-            decisao = total == 0 ? SessaoResultado.SEM_VOTOS.getDescricao() : SessaoResultado.EMPATE.getDescricao();
+        if (votosSim > votosNao) {
+            return SessaoResultado.APROVADA.name();
         }
-
-        return new ResultadoVotacaoDTO(total, sim, nao, decisao);
+        if (votosNao > votosSim) {
+            return SessaoResultado.REPROVADA.name();
+        }
+        return SessaoResultado.EMPATE.name();
     }
 }
