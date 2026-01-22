@@ -4,6 +4,7 @@ import br.com.adamastor.votacao.core.aplicacao.dto.ResultadoVotacaoDTO;
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaPublicadorResultado;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import java.util.UUID;
@@ -14,14 +15,16 @@ import java.util.UUID;
 public class AdaptadorPublicadorResultadoKafka implements PortaPublicadorResultado {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private static final String TOPICO_RESULTADOS = "sessao-resultado-topic";
+
+    @Value("${integracao.kafka.topic-resultado-sessao}")
+    private String topicoResultado;
 
     @Override
     public void publicar(UUID sessaoId, ResultadoVotacaoDTO resultado) {
         log.info("Publicando resultado da sessão {} no Kafka.", sessaoId);
 
         try {
-            kafkaTemplate.send(TOPICO_RESULTADOS, sessaoId.toString(), resultado)
+            kafkaTemplate.send(topicoResultado, sessaoId.toString(), resultado)
                     .get();
         } catch (Exception e) {
             log.error("Erro ao publicar resultado da pauta no Kafka. ID Sessão: {}", sessaoId, e);

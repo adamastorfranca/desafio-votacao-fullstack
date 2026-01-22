@@ -2,11 +2,10 @@ package br.com.adamastor.votacao.infraestrutura.saida.mensageria.adaptador;
 
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaPublicadorVoto;
 import br.com.adamastor.votacao.core.dominio.modelo.Voto;
-import br.com.adamastor.votacao.infraestrutura.configuracao.bean.ConfiguracaoKafka;
-import br.com.adamastor.votacao.infraestrutura.saida.mensageria.dto.VotoMensagemDTO;
 import br.com.adamastor.votacao.infraestrutura.saida.mensageria.mapper.VotoMensagemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,20 +14,25 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AdaptadorPublicadorVotoKafka implements PortaPublicadorVoto {
 
-    private final KafkaTemplate<String, VotoMensagemDTO> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final VotoMensagemMapper mapper;
+
+    @Value("${integracao.kafka.topic-votos}")
+    private String topicoVotos;
 
     @Override
     public void publicar(Voto voto) {
         var mensagem = mapper.paraMensagem(voto);
+        var chave = voto.getId().toString();
 
-        try {
-            kafkaTemplate.send(ConfiguracaoKafka.TOPICO_VOTOS, voto.getId().toString(), mensagem)
-                    .get();
-            log.debug("Voto publicado com sucesso no Kafka. ID: {}", voto.getId());
-        } catch (Exception e) {
-            log.error("Erro ao publicar voto no Kafka. ID: {}", voto.getId(), e);
-            throw new RuntimeException("Falha ao enviar voto para processamento", e);
-        }
+        log.debug("Publicando voto no Kafka. Tópico: {}, Chave: {}", topicoVotos, chave);
+
+        kafkaTemplate.send(topicoVotos, chave, mensagem)
+                .whenComplete((resultado, ex) -> {
+                    if (ex != null) {
+                        log.error("Erro ao publicar voto no Kafka. ID: {}", voto.getId(), ex);
+                        throw new RuntimeException("Falha ao enviar voto para processamento", ex);
+                    }
+                });
     }
 }

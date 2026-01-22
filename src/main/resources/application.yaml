@@ -47,6 +47,9 @@ resilience4j:
 integracao:
   cpf:
     url: https://user-info.herokuapp.com
+  kafka:
+    topic-votos: votos-registrados-topic
+    topic-resultado-sessao: sessao-resultado-topic
 
 feign:
   circuitbreaker:
