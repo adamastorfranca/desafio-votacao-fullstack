@@ -102,14 +102,14 @@ class RegistrarVotoCasoDeUsoImplTest {
 
     @Test
     @DisplayName("Deve lançar exceção quando sessão não está aberta")
-    void deveLancarExcecaoQuandoSessaoFechada() {
+    void deveLancarExcecaoQuandoSessaoENCERRADA() {
         var sessaoId = UUID.randomUUID();
         var cpf = "12345678900";
         var dados = new DadosVotoDTO(sessaoId, cpf, VotoOpcao.SIM);
 
         var sessao = Sessao.builder()
                 .id(sessaoId)
-                .status(SessaoStatus.FECHADA)
+                .status(SessaoStatus.ENCERRADA)
                 .dataHoraTermino(Instant.now().minusSeconds(3600))
                 .build();
 

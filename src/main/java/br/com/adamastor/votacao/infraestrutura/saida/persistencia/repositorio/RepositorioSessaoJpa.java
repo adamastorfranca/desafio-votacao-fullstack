@@ -5,6 +5,9 @@ import br.com.adamastor.votacao.infraestrutura.saida.persistencia.entidade.Sessa
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -12,4 +15,7 @@ public interface RepositorioSessaoJpa extends JpaRepository<SessaoEntidade, UUID
 
     boolean existsByPautaIdAndStatus(UUID pautaId, SessaoStatus status);
 
+    Optional<SessaoEntidade> findByPautaId(UUID id);
+
+    List<SessaoEntidade> findByDataHoraTerminoBeforeAndStatus(Instant dataHoraAtual, SessaoStatus status);
 }

@@ -6,6 +6,8 @@ import br.com.adamastor.votacao.infraestrutura.entrada.rest.dto.requisicao.Criar
 import br.com.adamastor.votacao.infraestrutura.entrada.rest.dto.resposta.PautaRespostaDTO;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface PautaWebMapper {
 

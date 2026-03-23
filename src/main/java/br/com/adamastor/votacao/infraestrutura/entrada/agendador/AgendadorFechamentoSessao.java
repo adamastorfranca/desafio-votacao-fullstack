@@ -17,7 +17,7 @@ public class AgendadorFechamentoSessao {
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     public void verificarSessoesEncerradas() {
-        log.debug("Scheduler: Verificando sessões encerradas pendentes de processamento...");
+        log.info("Scheduler: Verificando sessões encerradas pendentes de processamento...");
         casoDeUso.executar();
     }
 

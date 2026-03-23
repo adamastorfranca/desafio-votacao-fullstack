@@ -8,6 +8,7 @@ import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioSessa
 import br.com.adamastor.votacao.core.aplicacao.porta.saida.PortaRepositorioVoto;
 import br.com.adamastor.votacao.core.dominio.modelo.Sessao;
 import br.com.adamastor.votacao.core.dominio.modelo.SessaoResultado;
+import br.com.adamastor.votacao.core.dominio.modelo.SessaoStatus;
 import br.com.adamastor.votacao.core.dominio.modelo.VotoOpcao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,8 @@ public class ProcessarSessoesEncerradasCasoDeUsoImpl implements ProcessarSessoes
                     resultadoCalculado.totalVotos(),
                     resultadoCalculado.totalSim(),
                     resultadoCalculado.totalNao(),
-                    resultadoCalculado.resultado()
+                    resultadoCalculado.resultado(),
+                    SessaoStatus.ENCERRADA
             );
 
             portaRepositorioSessao.salvar(sessao);

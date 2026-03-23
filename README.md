@@ -199,6 +199,19 @@ Para suportar centenas de milhares de votos simultâneos, implementamos um pipel
 | **Spring Boot Test** | 3.4.0 | Utilitários e `@SpringBootTest` |
 | **Awaitility** | 4.0+ | Assertions assíncronas |
 
+### Frontend
+
+O sistema conta com um Dashboard Corporativo Financeiro desenvolvido em **React 19** e **TypeScript**, focando em UX/UI com **Material UI**. A aplicação é responsável pelo gerenciamento de pautas, abertura de sessões e recepção de votos.
+
+| Tecnologia | Função |
+|------------|--------|
+| **React 19 + TypeScript** | Core SPA corporativa com tipagem estrita |
+| **Material UI (MUI)** | Design System corporativo e responsivo |
+| **Vite** | Build tool e dev server de altíssima performance |
+| **Recharts / Axios** | Gráficos dinâmicos e comunicação HTTP |
+
+👉 **[Consulte a documentação completa do Frontend aqui](./frontend/README.md)**
+
 ---
 
 ## 📋 Pré-requisitos
@@ -571,6 +584,8 @@ Endpoint disponível em: `http://localhost:8080/actuator/metrics`
 
 ```plaintext
 desafio-votacao/
+│
+├── frontend/                    ← Dashboard Corporativo (React, TS, MUI)
 │
 ├── src/main/java/br/com/adamastor/votacao/
 │   ├── core/                    ← Lógica pura (Domínio)

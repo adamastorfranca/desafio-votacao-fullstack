@@ -7,8 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SessaoStatus {
 
+    AGUARDANDO("Aguardando"),
     ABERTA("Aberta"),
-    FECHADA("Fechada");
+    ENCERRADA("Encerrada");
 
     private final String descricao;
 

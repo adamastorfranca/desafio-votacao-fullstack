@@ -160,8 +160,8 @@ class AdaptadorSessaoPostgresTest {
     }
 
     @Test
-    @DisplayName("Deve mapear resultado de sessão fechada corretamente")
-    void deveMapearResultadoDeSessaoFechadaCorretamente() {
+    @DisplayName("Deve mapear resultado de sessão ENCERRADA corretamente")
+    void deveMapearResultadoDeSessaoENCERRADACorretamente() {
         // Arrange
         var idSessao = UUID.randomUUID();
         var pautaId = UUID.randomUUID();
@@ -173,31 +173,31 @@ class AdaptadorSessaoPostgresTest {
                 .pautaId(pautaId)
                 .dataHoraInicio(passado)
                 .dataHoraTermino(agora)
-                .status(SessaoStatus.FECHADA)
+                .status(SessaoStatus.ENCERRADA)
                 .totalVotos(10L)
                 .totalSim(6L)
                 .totalNao(4L)
                 .build();
 
-        var entidadeFechada = new SessaoEntidade();
-        entidadeFechada.setId(idSessao);
-        entidadeFechada.setPautaId(pautaId);
-        entidadeFechada.setDataHoraInicio(passado);
-        entidadeFechada.setDataHoraTermino(agora);
-        entidadeFechada.setStatus(SessaoStatus.FECHADA);
-        entidadeFechada.setTotalVotos(10);
-        entidadeFechada.setTotalSim(6);
-        entidadeFechada.setTotalNao(4);
+        var entidadeENCERRADA = new SessaoEntidade();
+        entidadeENCERRADA.setId(idSessao);
+        entidadeENCERRADA.setPautaId(pautaId);
+        entidadeENCERRADA.setDataHoraInicio(passado);
+        entidadeENCERRADA.setDataHoraTermino(agora);
+        entidadeENCERRADA.setStatus(SessaoStatus.ENCERRADA);
+        entidadeENCERRADA.setTotalVotos(10);
+        entidadeENCERRADA.setTotalSim(6);
+        entidadeENCERRADA.setTotalNao(4);
 
-        when(mapper.paraEntidade(sessaoDominio)).thenReturn(entidadeFechada);
-        when(repositorioSessaoJpa.save(any(SessaoEntidade.class))).thenReturn(entidadeFechada);
-        when(mapper.paraDominio(entidadeFechada)).thenReturn(sessaoDominio);
+        when(mapper.paraEntidade(sessaoDominio)).thenReturn(entidadeENCERRADA);
+        when(repositorioSessaoJpa.save(any(SessaoEntidade.class))).thenReturn(entidadeENCERRADA);
+        when(mapper.paraDominio(entidadeENCERRADA)).thenReturn(sessaoDominio);
 
         // Act
         var resultado = adaptador.salvar(sessaoDominio);
 
         // Assert
-        assertThat(resultado.getStatus()).isEqualTo(SessaoStatus.FECHADA);
+        assertThat(resultado.getStatus()).isEqualTo(SessaoStatus.ENCERRADA);
         assertThat(resultado.getTotalVotos()).isEqualTo(10);
         assertThat(resultado.getTotalSim()).isEqualTo(6);
         assertThat(resultado.getTotalNao()).isEqualTo(4);

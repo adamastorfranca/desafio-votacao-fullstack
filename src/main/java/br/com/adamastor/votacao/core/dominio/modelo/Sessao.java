@@ -51,11 +51,13 @@ public class Sessao {
             long totalVotos,
             long totalSim,
             long totalNao,
-            String resultado
+            String resultado,
+            SessaoStatus status
     ) {
         this.totalVotos = totalVotos;
         this.totalSim = totalSim;
         this.totalNao = totalNao;
         this.resultado = SessaoResultado.aPartirDe(resultado);
+        this.status = status;
     }
 }

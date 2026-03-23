@@ -74,19 +74,19 @@ class SessaoMappersTest {
     }
 
     @Test
-    @DisplayName("SessaoWebMapper: Deve mapear status FECHADA corretamente")
-    void deveMapearStatusFechadaCorretamente() {
+    @DisplayName("SessaoWebMapper: Deve mapear status ENCERRADA corretamente")
+    void deveMapearStatusENCERRADACorretamente() {
         var sessao = Sessao.builder()
                 .id(UUID.randomUUID())
                 .pautaId(UUID.randomUUID())
                 .dataHoraInicio(Instant.now())
                 .dataHoraTermino(Instant.now().plusSeconds(300))
-                .status(SessaoStatus.FECHADA)
+                .status(SessaoStatus.ENCERRADA)
                 .build();
 
         SessaoRespostaDTO resposta = webMapper.paraResposta(sessao);
 
-        assertThat(resposta.status()).isEqualTo("Fechada");
+        assertThat(resposta.status()).isEqualTo("Encerrada");
     }
 
     @Test
@@ -130,7 +130,7 @@ class SessaoMappersTest {
                 .pautaId(UUID.randomUUID())
                 .dataHoraInicio(Instant.now())
                 .dataHoraTermino(Instant.now().plusSeconds(300))
-                .status(SessaoStatus.FECHADA)
+                .status(SessaoStatus.ENCERRADA)
                 .resultado(SessaoResultado.REPROVADA)
                 .build();
 
@@ -152,7 +152,7 @@ class SessaoMappersTest {
                 .pautaId(pautaId)
                 .dataHoraInicio(dataHoraInicio)
                 .dataHoraTermino(dataHoraTermino)
-                .status(SessaoStatus.FECHADA)
+                .status(SessaoStatus.ENCERRADA)
                 .totalVotos(5)
                 .totalSim(3)
                 .totalNao(2)
@@ -165,7 +165,7 @@ class SessaoMappersTest {
         assertThat(sessao.getPautaId()).isEqualTo(pautaId);
         assertThat(sessao.getDataHoraInicio()).isEqualTo(dataHoraInicio);
         assertThat(sessao.getDataHoraTermino()).isEqualTo(dataHoraTermino);
-        assertThat(sessao.getStatus()).isEqualTo(SessaoStatus.FECHADA);
+        assertThat(sessao.getStatus()).isEqualTo(SessaoStatus.ENCERRADA);
         assertThat(sessao.getTotalVotos()).isEqualTo(5);
         assertThat(sessao.getTotalSim()).isEqualTo(3);
         assertThat(sessao.getTotalNao()).isEqualTo(2);

@@ -9,9 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -52,6 +54,10 @@ public class AdaptadorSessaoPostgres implements PortaRepositorioSessao {
 
     @Override
     public List<Sessao> buscarSessoesEncerradasNaoContabilizadas() {
-        return List.of();
+        log.debug("Adaptador: Buscando sessões encerradas e não contabilizadas.");
+        return repositorioSessaoJpa.findByDataHoraTerminoBeforeAndStatus(Instant.now(), SessaoStatus.ABERTA)
+                .stream()
+                .map(mapper::paraDominio)
+                .collect(Collectors.toList());
     }
 }

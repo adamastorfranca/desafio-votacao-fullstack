@@ -5,6 +5,7 @@ import br.com.adamastor.votacao.infraestrutura.entrada.rest.ApiConstantes;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.entidade.PautaEntidade;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.repositorio.RepositorioPautaJpa;
 import br.com.adamastor.votacao.infraestrutura.saida.persistencia.repositorio.RepositorioSessaoJpa;
+import br.com.adamastor.votacao.infraestrutura.saida.persistencia.repositorio.RepositorioVotoJpa;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,8 +36,12 @@ class SessaoControllerTest extends BaseIntegrationTest {
     @Autowired
     private RepositorioPautaJpa repositorioPautaJpa;
 
+    @Autowired
+    private RepositorioVotoJpa repositorioVotoJpa;
+
     @AfterEach
     void limparBancoDeDados() {
+        repositorioVotoJpa.deleteAll();
         repositorioSessaoJpa.deleteAll();
         repositorioPautaJpa.deleteAll();
     }
@@ -89,7 +94,8 @@ class SessaoControllerTest extends BaseIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("Aberta"));
 
-        var sessaoSalva = repositorioSessaoJpa.findAll().getFirst();
+        var sessaoSalva = repositorioSessaoJpa.findByPautaId(pauta.getId())
+                .orElseThrow(() -> new AssertionError("A sessão não foi encontrada no banco de dados para a pauta informada."));
         assertNotNull(sessaoSalva.getDataHoraTermino());
         var duracaoEsperadaSegundos = tempoMinutos * 60;
         var duracaoReal = Duration.between(sessaoSalva.getDataHoraInicio(), sessaoSalva.getDataHoraTermino());

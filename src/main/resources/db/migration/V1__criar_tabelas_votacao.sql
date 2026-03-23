@@ -18,7 +18,9 @@ CREATE TABLE tb_sessao (
     tx_opcao_ganhadora VARCHAR(20),
     CONSTRAINT pk_sessao PRIMARY KEY (id_sessao),
     CONSTRAINT fk_sessao_pauta FOREIGN KEY (id_pauta) REFERENCES tb_pauta(id_pauta),
-    CONSTRAINT uk_sessao_pauta UNIQUE (id_pauta)
+    CONSTRAINT uk_sessao_pauta UNIQUE (id_pauta),
+    CONSTRAINT chk_sessao_situacao CHECK (st_situacao IN ('AGUARDANDO', 'ABERTA', 'ENCERRADA')),
+    CONSTRAINT chk_sessao_resultado CHECK (tx_opcao_ganhadora IN ('APROVADA', 'REPROVADA', 'EMPATE', 'SEM_VOTOS') OR tx_opcao_ganhadora IS NULL)
 );
 
 CREATE TABLE tb_voto (
@@ -29,5 +31,6 @@ CREATE TABLE tb_voto (
     dh_criacao TIMESTAMP NOT NULL,
     CONSTRAINT pk_voto PRIMARY KEY (id_voto),
     CONSTRAINT fk_voto_sessao FOREIGN KEY (id_sessao) REFERENCES tb_sessao(id_sessao),
-    CONSTRAINT uk_voto_sessao_cpf UNIQUE (id_sessao, tx_cpf_associado)
+    CONSTRAINT uk_voto_sessao_cpf UNIQUE (id_sessao, tx_cpf_associado),
+    CONSTRAINT chk_voto_opcao CHECK (tx_opcao_voto IN ('SIM', 'NAO'))
 );
